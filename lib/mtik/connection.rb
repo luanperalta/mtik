@@ -62,6 +62,7 @@ class MTik::Connection
     @ssl_sock              = nil
     @requests              = Hash.new
     @use_ssl               = args[:ssl] || MTik::USE_SSL
+    @ssl_ciphers           = args[:ssl_ciphers] || ['HIGH']
     @unencrypted_plaintext = args[:unencrypted_plaintext]
     @host                  = args[:host]
     @port                  = args[:port] || (@use_ssl ? MTik::PORT_SSL : MTik::PORT)
@@ -173,7 +174,7 @@ class MTik::Connection
 
   def connect_ssl(sock)
     ssl_context = OpenSSL::SSL::SSLContext.new()
-    ssl_context.ciphers = ['HIGH']
+    ssl_context.ciphers = @ssl_ciphers
     ssl_socket = OpenSSL::SSL::SSLSocket.new(sock, ssl_context)
     ssl_socket.sync_close = true
     unless ssl_socket.connect
